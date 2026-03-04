@@ -6,16 +6,19 @@ import { useTheme } from "../context/ThemeContext";
 /* ─────────────────────────────────────────────────────────────────────────────
    LOGO
 ───────────────────────────────────────────────────────────────────────────── */
-const GDRIVE_FILE_ID = "18dzI6LmL8rr4V98H1pPZHAUMZ5bf8jiU";
+const NEW_LOGO_ID  = "182UVO8BPxiSt5cJGF-yw9IUPbZhmFYwN";
 const LOGO_URLS = [
-  `https://drive.google.com/thumbnail?id=${GDRIVE_FILE_ID}&sz=w800`,
-  `https://drive.google.com/thumbnail?id=${GDRIVE_FILE_ID}&sz=w400`,
-  `https://lh3.googleusercontent.com/d/${GDRIVE_FILE_ID}=w400`,
-  `https://lh3.googleusercontent.com/d/${GDRIVE_FILE_ID}`,
-  `https://drive.google.com/uc?export=view&id=${GDRIVE_FILE_ID}`,
-  `https://drive.google.com/uc?id=${GDRIVE_FILE_ID}`,
+  /* ── New logo — all Google Drive serving strategies ── */
+  `https://drive.google.com/thumbnail?id=${NEW_LOGO_ID}&sz=w800`,
+  `https://drive.google.com/thumbnail?id=${NEW_LOGO_ID}&sz=w400`,
+  `https://drive.google.com/thumbnail?id=${NEW_LOGO_ID}&sz=w200`,
+  `https://lh3.googleusercontent.com/d/${NEW_LOGO_ID}=w400`,
+  `https://lh3.googleusercontent.com/d/${NEW_LOGO_ID}=w800`,
+  `https://lh3.googleusercontent.com/d/${NEW_LOGO_ID}`,
+  `https://drive.google.com/uc?export=view&id=${NEW_LOGO_ID}`,
+  `https://drive.google.com/uc?id=${NEW_LOGO_ID}`,
+  /* ── Website fallback ── */
   "https://emojidigitals.com/wp-content/uploads/2023/07/Emoji-Digitals-Logo.png",
-  "https://emojidigitals.com/wp-content/uploads/emoji-digitals-logo.png",
   "/logo.svg",
 ];
 
@@ -27,33 +30,48 @@ export function LogoMark({ height = 40, className = "" }: { height?: number; cla
     return (
       <img
         src={LOGO_URLS[urlIndex]}
-        alt="Emoji Digitals"
+        alt="Emoji Digitals Logo"
         height={height}
         style={{
-          height: `${height}px`, width: "auto", objectFit: "contain",
+          height: `${height}px`,
+          width: "auto",
+          objectFit: "contain",
+          display: "block",
+          /* ── Transparency trick ──
+             screen   → white pixels vanish on dark backgrounds (night mode)
+             multiply → white pixels vanish on light backgrounds (day mode)  */
           mixBlendMode: isDark ? "screen" : "multiply",
           filter: isDark
-            ? "brightness(1.2) contrast(1.05)"
-            : "brightness(0.9) contrast(1.1) saturate(1.2)",
+            ? "brightness(1.4) contrast(1.1) saturate(1.1)"
+            : "brightness(0.85) contrast(1.15) saturate(1.2)",
+          transition: "filter 0.4s ease",
         }}
         className={className}
         onError={() => setUrlIndex((i) => i + 1)}
+        crossOrigin="anonymous"
       />
     );
   }
 
+  /* SVG fallback — only shown when ALL URLs fail */
   return (
-    <svg viewBox="0 0 160 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+    <svg viewBox="0 0 200 70" fill="none" xmlns="http://www.w3.org/2000/svg"
       className={className} style={{ height: `${height}px`, width: "auto" }}>
       <defs>
         <linearGradient id="edGradFb" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#60a5fa" />
-          <stop offset="50%" stopColor="#818cf8" />
+          <stop offset="0%"   stopColor="#38bdf8" />
+          <stop offset="50%"  stopColor="#818cf8" />
           <stop offset="100%" stopColor="#c084fc" />
         </linearGradient>
       </defs>
-      <text x="80" y="48" textAnchor="middle" fontFamily="Arial Black, Impact, sans-serif"
-        fontWeight="900" fontSize="54" fill="url(#edGradFb)" letterSpacing="-2">ED</text>
+      <rect x="2" y="2" width="66" height="66" rx="16" fill="url(#edGradFb)" opacity="0.15" />
+      <rect x="2" y="2" width="66" height="66" rx="16" stroke="url(#edGradFb)" strokeWidth="1.5" />
+      <text x="35" y="50" textAnchor="middle" fontFamily="Arial Black, sans-serif"
+        fontWeight="900" fontSize="36" fill="url(#edGradFb)">ED</text>
+      <text x="115" y="30" textAnchor="middle" fontFamily="'Space Grotesk', Arial, sans-serif"
+        fontWeight="800" fontSize="18" fill="url(#edGradFb)" letterSpacing="1">EMOJI</text>
+      <text x="115" y="52" textAnchor="middle" fontFamily="'Space Grotesk', Arial, sans-serif"
+        fontWeight="800" fontSize="18" fill="url(#edGradFb)" letterSpacing="1">DIGITALS</text>
     </svg>
   );
 }
@@ -152,12 +170,20 @@ const MORE_LINKS = [
    NAVBAR
 ───────────────────────────────────────────────────────────────────────────── */
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
+  const [menuOpen, setMenuOpen]   = useState(false);
+  const [moreOpen, setMoreOpen]   = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 1024);
   const moreRef  = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { isDark } = useTheme();
+
+  /* Track viewport width */
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -216,8 +242,14 @@ export function Navbar() {
 
         {/* Logo */}
         <Link to="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", flexShrink: 0 }}>
-          <div style={{ mixBlendMode: isDark ? "screen" : "normal" }}>
-            <LogoMark height={42} />
+          <div style={{
+            flexShrink: 0,
+            background: isDark ? "transparent" : "transparent",
+            borderRadius: "10px",
+            overflow: "hidden",
+            lineHeight: 0,
+          }}>
+            <LogoMark height={44} />
           </div>
           <div>
             <div className="gradient-text" style={{
@@ -230,8 +262,8 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }} className="hidden lg:flex">
+        {/* Desktop Nav — only visible on large screens */}
+        <div style={{ display: isDesktop ? "flex" : "none", alignItems: "center", gap: "4px" }}>
           {NAV_LINKS.map((link) => (
             <Link key={link.path} to={link.path}
               style={{
@@ -339,20 +371,27 @@ export function Navbar() {
         {/* Right side: Theme Toggle + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <ThemeToggle />
-          <Link to="/contact"
-            className="btn-primary hidden lg:inline-block"
-            style={{
-              padding: "10px 20px", borderRadius: "999px", color: "#fff",
-              fontWeight: 600, fontSize: "13px", textDecoration: "none", whiteSpace: "nowrap",
-            }}
-          >Start a Project →</Link>
+          {/* CTA button — desktop only */}
+          {isDesktop && (
+            <Link to="/contact"
+              className="btn-primary"
+              style={{
+                padding: "10px 20px", borderRadius: "999px", color: "#fff",
+                fontWeight: 600, fontSize: "13px", textDecoration: "none", whiteSpace: "nowrap",
+                display: "inline-block",
+              }}
+            >Start a Project →</Link>
+          )}
 
-          {/* Hamburger */}
+          {/* Hamburger — mobile only */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle navigation menu"
-            className="lg:hidden"
-            style={{ background: "none", border: "none", cursor: "pointer", padding: "8px", display: "flex", flexDirection: "column", gap: "5px" }}
+            style={{
+              display: isDesktop ? "none" : "flex",
+              background: "none", border: "none", cursor: "pointer",
+              padding: "8px", flexDirection: "column", gap: "5px",
+            }}
           >
             {[0, 1, 2].map((i) => (
               <span key={i} style={{
@@ -368,9 +407,10 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className="lg:hidden" style={{
-        display: menuOpen ? "flex" : "none", flexDirection: "column", gap: "2px",
+      {/* Mobile Menu — only render on small screens */}
+      <div style={{
+        display: (!isDesktop && menuOpen) ? "flex" : "none",
+        flexDirection: "column", gap: "2px",
         padding: "12px 24px 24px",
         background: mobileMenuBg, backdropFilter: "blur(24px)",
         borderTop: `1px solid ${dropBorder}`,
@@ -443,8 +483,14 @@ export function Footer() {
             {/* Brand */}
             <div style={{ gridColumn: "span 2" }}>
               <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: "12px", textDecoration: "none", marginBottom: "20px" }}>
-                <div style={{ mixBlendMode: isDark ? "screen" : "normal" }}>
-                  <LogoMark height={48} />
+                <div style={{
+                  flexShrink: 0,
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  lineHeight: 0,
+                  background: "transparent",
+                }}>
+                  <LogoMark height={52} />
                 </div>
                 <div>
                   <div className="gradient-text" style={{ fontWeight: 800, fontSize: "17px", lineHeight: 1, letterSpacing: "0.05em", fontFamily: "'Space Grotesk', sans-serif" }}>

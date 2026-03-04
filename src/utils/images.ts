@@ -14,7 +14,7 @@ export const gd = (id: string, sz = 800) =>
  */
 export const IMGS = {
   // Brand / Logo
-  logo:   "182UVO8BPxiSt5cJGF-yw9IUPbZhmFYwN",
+  logo:   "18dzI6LmL8rr4V98H1pPZHAUMZ5bf8jiU",
 
   // Portfolio / Design work (original)
   port1:  "1k-DTs5AeqZiaNrllThxwgtRK0Ln8OnMq",
