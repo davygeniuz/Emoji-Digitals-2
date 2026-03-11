@@ -26,7 +26,7 @@ const LINES = [
   `app.listen(PORT, () => console.log("Server live on port", PORT));`,
   // CSS / Tailwind
   `@keyframes neonPulse { 0% { opacity:0.4 } 50% { opacity:1 } }`,
-  `background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);`,
+  `background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);`,
   `.card { backdrop-filter: blur(20px); border-radius: 1.5rem; }`,
   `animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;`,
   // Python / AI / ML
@@ -70,15 +70,14 @@ const LINES = [
   `const brand = await BrandEngine.init({ client: "EmojiDigitals" });`,
 ];
 
+// STRICTLY TWO BRAND COLOURS: Blue & Purple only
 const COLORS: [number, number, number][] = [
-  [96,  165, 250],  // blue-400
-  [129, 140, 248],  // indigo-400
-  [167, 139, 250],  // violet-400
-  [34,  211, 238],  // cyan-400
-  [52,  211, 153],  // emerald-400
-  [248, 113, 113],  // red-400
-  [251, 191, 36],   // amber-400
-  [163, 230, 53],   // lime-400
+  [59,  130, 246],  // blue-500  (primary brand blue)
+  [96,  165, 250],  // blue-400  (lighter blue)
+  [139, 92,  246],  // purple-500 (primary brand purple)
+  [167, 139, 250],  // purple-400 (lighter purple)
+  [99,  102, 241],  // indigo-500 (mid blue-purple transition)
+  [129, 140, 248],  // indigo-400 (lighter mid)
 ];
 
 interface Line {

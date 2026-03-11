@@ -15,12 +15,13 @@ interface Packet {
   color: [number, number, number];
 }
 
+// STRICTLY TWO BRAND COLOURS: Blue & Purple only
 const COLORS: [number, number, number][] = [
-  [59,  130, 246],  // blue
-  [99,  102, 241],  // indigo
-  [139,  92, 246],  // violet
-  [34,  211, 238],  // cyan
-  [52,  211, 153],  // emerald
+  [59,  130, 246],  // blue-500  (primary brand blue)
+  [96,  165, 250],  // blue-400  (lighter blue)
+  [139, 92,  246],  // purple-500 (primary brand purple)
+  [167, 139, 250],  // purple-400 (lighter purple)
+  [99,  102, 241],  // indigo-500 (blue-purple transition)
 ];
 
 export function FooterCodeBg() {
