@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import type { JSX } from "react";
 
 interface Node {
   x: number; y: number;
@@ -34,7 +35,7 @@ export function FooterCodeBg() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let nodes: Node[]     = [];
+    let nodes: Node[] = [];
     let packets: Packet[] = [];
     let frame = 0;
 
